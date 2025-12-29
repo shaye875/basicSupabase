@@ -19,12 +19,26 @@ const { name, password } = req.body
         res.status(401)
         res.json({ "false": "user not exist" })
     } else {
-        // res.json({ "true": "Login successful" })
         next()
     }
 }
 
-products.post("/login",login)
+products.post("/login",async(req,res)=>{
+    const { name, password } = req.body
+    const users = await getAllUsers()
+    let bool = false
+    for (let user of users) {
+        if (user.name === name && String(user.password) === password) {
+            bool = true
+        }
+    }
+    if (bool === false) {
+        res.status(401)
+        res.json({ "false": "user not exist" })
+    } else {
+        res.json({"true":"you exist"})
+    }
+})
 
 products.get("/products",login, async (req, res) => {
     const {data, error } = await supabase
